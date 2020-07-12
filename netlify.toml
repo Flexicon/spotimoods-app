@@ -1,0 +1,5 @@
+[[redirects]]
+  from = "/api/*"
+  to = "http://spotimoods-api.nerfthis.xyz/:splat"
+  status = 200
+  force = true
