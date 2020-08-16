@@ -5,15 +5,13 @@
     <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
 
     <b-collapse id="nav-collapse" is-nav>
-      <b-navbar-nav>
-        <b-nav-item href="/about">About</b-nav-item>
-      </b-navbar-nav>
+      <b-navbar-nav></b-navbar-nav>
 
       <b-navbar-nav class="ml-auto">
-        <b-nav-item>
+        <b-nav-item @click.prevent="signOut">
           <span class="d-flex align-items-center">
             <fa :icon="signOutIcon" class="mr-1" />
-            <span>Log out</span>
+            <span>Sign out</span>
           </span>
         </b-nav-item>
       </b-navbar-nav>
@@ -28,6 +26,12 @@ export default {
   computed: {
     signOutIcon() {
       return faSignOutAlt
+    },
+  },
+  methods: {
+    async signOut() {
+      await this.$store.dispatch('auth/logOut')
+      this.$router.push({ name: 'login' })
     },
   },
 }
