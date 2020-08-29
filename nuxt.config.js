@@ -77,6 +77,13 @@ export default {
       pathRewrite: { '^/api/': '' },
     },
   },
+  /**
+   * Loading bar plugin
+   */
+  loading: {
+    color: '#007bff',
+    height: '5px',
+  },
   /*
    ** Build configuration
    ** See https://nuxtjs.org/api/configuration-build/
