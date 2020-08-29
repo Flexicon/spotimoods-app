@@ -10,8 +10,7 @@
       <template v-slot:header>Spotimoods</template>
 
       <template v-slot:lead>
-        Compose playlists of your favorite music based on time, weather and -
-        most importantly - your mood.
+        Compose playlists of your favorite music based on time, weather and - most importantly - your mood.
       </template>
 
       <p class="lead mt-5">
