@@ -20,8 +20,22 @@
         >
           <span class="mood-item-color" :style="getMoodColorStyle(mood)"></span>
 
-          <span v-if="editedID != mood.id">{{ mood.name }}</span>
-          <span v-else style="display: flex;">
+          <div v-if="editedID != mood.id">
+            <a
+              v-if="mood.has_playlist"
+              class="playlist_link"
+              :href="`https://open.spotify.com/playlist/${mood.playlist_id}`"
+            >
+              <span>{{ mood.name }}</span>
+              <fa class="playlist_link__icon" :icon="linkIcon" />
+            </a>
+            <span v-else>{{ mood.name }}</span>
+
+            <button class="action edit">
+              <fa :icon="editMoodIcon" />
+            </button>
+          </div>
+          <div v-else class="d-flex">
             <b-input
               v-model="mood.name"
               size="sm"
@@ -31,22 +45,21 @@
               @keydown.enter="saveMood(mood)"
               @keydown.esc="deleteMood(mood)"
             />
-            <b-input
-              v-model="mood.color"
-              class="mood-color-picker"
-              type="color"
-              size="sm"
-            />
-          </span>
+            <b-input v-model="mood.color" class="mood-color-picker" type="color" size="sm" />
 
-          <button class="close" @click="deleteMood(mood)">
+            <button class="action submit" @click="saveMood(mood)">
+              <fa :icon="submitMoodIcon" />
+            </button>
+          </div>
+
+          <button class="action close" @click="deleteMood(mood)">
             <fa :icon="deleteMoodIcon" />
           </button>
         </b-alert>
       </div>
 
       <em v-else class="text-muted">
-        no moods yet
+        Go on then, add a mood!
       </em>
     </div>
 
@@ -61,7 +74,7 @@
 </template>
 
 <script>
-import { faPlusSquare, faTimes } from '@fortawesome/free-solid-svg-icons'
+import { faCheck, faExternalLinkAlt, faPencilAlt, faPlusSquare, faTimes } from '@fortawesome/free-solid-svg-icons'
 
 export default {
   middleware: 'authenticated',
@@ -76,11 +89,20 @@ export default {
     editedID() {
       return this.editedMood?.id
     },
+    linkIcon() {
+      return faExternalLinkAlt
+    },
     addMoodIcon() {
       return faPlusSquare
     },
     deleteMoodIcon() {
       return faTimes
+    },
+    submitMoodIcon() {
+      return faCheck
+    },
+    editMoodIcon() {
+      return faPencilAlt
     },
   },
   created() {
@@ -137,8 +159,7 @@ export default {
         return
       }
 
-      const confirmMsg =
-        this.editedID === mood.id ? 'Revert changes?' : 'Delete mood?'
+      const confirmMsg = this.editedID === mood.id ? 'Revert changes?' : 'Delete mood?'
       const confirmed = await this.$bvModal.msgBoxConfirm(confirmMsg, {
         size: 'sm',
         buttonSize: 'sm',
@@ -170,16 +191,24 @@ export default {
   column-gap: 1rem;
 
   @media screen and (min-width: 768px) {
-    grid-template-columns: 1fr 1fr 1fr 1fr;
+    grid-template-columns: 1fr 1fr 1fr;
   }
 }
 
 .mood-item {
   padding-right: 4rem;
   padding-top: 1rem;
+  min-height: 100px;
 
   &.editing {
-    padding: 0.8rem 3.25rem 0 0.5rem;
+    padding: 1rem 4.5rem 0.3rem 0.5rem;
+  }
+
+  &:hover,
+  &.editing {
+    .action {
+      opacity: 0.5;
+    }
   }
 
   .mood-item-color {
@@ -200,13 +229,37 @@ export default {
     width: 2.2rem;
   }
 
-  .close {
+  .action {
     position: absolute;
     top: 0;
-    right: 0;
-    padding: 1.25rem;
-    font-size: 1rem;
+    right: 0.5rem;
     color: inherit;
+    background-color: transparent;
+    border: 0;
+    font-size: 1rem;
+    font-weight: 700;
+    line-height: 1;
+    text-shadow: 0 1px 0 #fff;
+    padding: 1.35rem 0.5rem 1rem;
+
+    opacity: 0;
+    transition: opacity 0.5s;
   }
+
+  .submit,
+  .edit {
+    right: 2.2rem;
+  }
+}
+
+.playlist_link {
+  span {
+    color: black;
+  }
+}
+
+.playlist_link__icon {
+  font-size: 0.7rem;
+  margin-left: 5px;
 }
 </style>
