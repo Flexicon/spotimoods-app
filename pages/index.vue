@@ -254,7 +254,8 @@ export default {
 
 .playlist_link {
   span {
-    color: black;
+    color: #212529;
+    font-weight: 500;
   }
 }
 
