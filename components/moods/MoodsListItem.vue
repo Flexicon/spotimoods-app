@@ -53,6 +53,10 @@ export default {
     },
     editing: Boolean,
     busy: Boolean,
+    initialValues: {
+      type: Object,
+      default: () => null,
+    },
   },
   computed: {
     linkIcon() {
@@ -71,6 +75,13 @@ export default {
       return {
         background: this.mood?.color || undefined,
       }
+    },
+    valuesEdited() {
+      if (!this.editing || !this.initialValues) {
+        return false
+      }
+
+      return this.initialValues.name !== this.mood.name || this.initialValues.color !== this.mood.color
     },
   },
   created() {
@@ -97,6 +108,11 @@ export default {
     async deleteMood() {
       if (this.mood.new) {
         this.$emit('delete', { ...this.mood })
+        return
+      }
+
+      if (this.editing && !this.valuesEdited) {
+        this.$emit('revert', { ...this.mood })
         return
       }
 

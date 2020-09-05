@@ -14,6 +14,7 @@
         v-for="mood in moods"
         :key="mood.id"
         :mood="mood.id === editedMoodID ? editedMood : mood"
+        :initial-values="mood"
         :editing="mood.id === editedMoodID"
         :busy="busy"
         :events="itemEvents"
