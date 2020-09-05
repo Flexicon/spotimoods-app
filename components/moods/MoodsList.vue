@@ -2,7 +2,7 @@
   <div class="moods">
     <h3 class="mb-3">
       <span>Moods</span>
-      <a href="#" role="button" @click.prevent="addMood">
+      <a class="add-mood" href="#" role="button" :disabled="isUserEditing" @click.prevent="addMood">
         <fa :icon="addMoodIcon" />
       </a>
     </h3>
@@ -16,13 +16,22 @@
         :mood="mood.id === editedMoodID ? editedMood : mood"
         :editing="mood.id === editedMoodID"
         :busy="busy"
+        :events="itemEvents"
         @save="saveMood"
         @delete="deleteMood"
         @edit="editMood"
         @revert="revertMood"
       />
 
-      <MoodsListItem v-if="newMood" :mood="newMood" :busy="busy" editing @save="saveMood" @delete="deleteMood" />
+      <MoodsListItem
+        v-if="newMood"
+        :mood="newMood"
+        :busy="busy"
+        :events="itemEvents"
+        editing
+        @save="saveMood"
+        @delete="deleteMood"
+      />
     </div>
 
     <em v-else class="text-muted">
@@ -32,6 +41,7 @@
 </template>
 
 <script>
+import Vue from 'vue'
 import { faPlusSquare } from '@fortawesome/free-solid-svg-icons'
 
 export default {
@@ -44,6 +54,7 @@ export default {
   },
   data() {
     return {
+      itemEvents: new Vue(),
       newMood: null,
       editedMood: null,
     }
@@ -52,13 +63,17 @@ export default {
     editedMoodID() {
       return this.editedMood?.id
     },
+    isUserEditing() {
+      return Boolean(this.newMood || this.editedMood)
+    },
     addMoodIcon() {
       return faPlusSquare
     },
   },
   methods: {
     addMood() {
-      if (this.newMood) {
+      if (this.isUserEditing) {
+        this.itemEvents.$emit('edit-prevented')
         return
       }
 
@@ -90,6 +105,11 @@ export default {
     },
 
     editMood(mood) {
+      if (this.isUserEditing) {
+        this.itemEvents.$emit('edit-prevented')
+        return
+      }
+
       this.editedMood = { ...mood }
     },
 
@@ -101,6 +121,12 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.add-mood {
+  &[disabled] {
+    color: grey;
+  }
+}
+
 .moods-list {
   display: grid;
   grid-template-columns: 1fr;

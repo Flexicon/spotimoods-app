@@ -15,6 +15,7 @@
     </div>
     <div v-else class="d-flex">
       <b-input
+        ref="nameInput"
         v-model="mood.name"
         size="sm"
         placeholder="Mood name..."
@@ -37,10 +38,15 @@
 </template>
 
 <script>
+import Vue from 'vue'
 import { faCheck, faExternalLinkAlt, faPencilAlt, faTimes } from '@fortawesome/free-solid-svg-icons'
 
 export default {
   props: {
+    events: {
+      type: Vue,
+      default: () => null,
+    },
     mood: {
       type: Object,
       default: () => ({}),
@@ -66,6 +72,15 @@ export default {
         background: this.mood?.color || undefined,
       }
     },
+  },
+  created() {
+    if (this.events) {
+      this.events.$on('edit-prevented', () => {
+        if (this.$refs.nameInput) {
+          this.$refs.nameInput.focus()
+        }
+      })
+    }
   },
   methods: {
     editMood() {
