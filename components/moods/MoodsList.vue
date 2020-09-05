@@ -9,7 +9,7 @@
 
     <b-spinner v-if="busy && moods === null" />
 
-    <div v-else-if="moods && moods.length" class="moods-list">
+    <div v-else-if="moods && (moods.length || newMood)" class="moods-list">
       <MoodsListItem
         v-for="mood in moods"
         :key="mood.id"
