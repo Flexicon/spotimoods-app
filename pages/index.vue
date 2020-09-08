@@ -4,11 +4,7 @@
 
     <hr class="my-5" />
 
-    <div>
-      <h3 class="mb-3">Artists</h3>
-
-      <em class="text-muted">artists will go here...</em>
-    </div>
+    <ArtistsList :artists="artists" />
   </div>
 </template>
 
@@ -17,12 +13,14 @@ export default {
   middleware: 'authenticated',
   data() {
     return {
+      artists: null,
       moods: null,
       loadingMoods: false,
     }
   },
   created() {
     this.fetchMoods()
+    this.fetchTopArtists()
 
     if (this.$route.query.authed) {
       this.$bvToast.toast('Signed in', {
@@ -33,6 +31,12 @@ export default {
     }
   },
   methods: {
+    async fetchTopArtists() {
+      this.loadingArtists = true
+      this.artists = await this.$axios.$get('/api/artists/top')
+      this.loadingArtists = false
+    },
+
     async fetchMoods() {
       this.loadingMoods = true
       this.moods = await this.$axios.$get('/api/moods')
